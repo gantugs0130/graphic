@@ -1,6 +1,4 @@
 #include "header.h"
-#include <GL/glu.h>
-#include <GL/glut.h>
 #define PI 3.14159265
 
 float x=100.0f,z=100.0f,y=100.0f;
@@ -94,8 +92,6 @@ void resize(int w, int h)
 }
 void setup()
 {
-
-	File_Read();
 	GLfloat  ambientLight[] = {0.4f, 0.4f, 0.4f, 1.0f };
     GLfloat  diffuseLight[] = {0.7f, 0.7f, 0.7f, 1.0f };
     GLfloat  specular[] = { 0.9f, 0.9f, 0.9f, 1.0f};
@@ -117,22 +113,23 @@ void setup()
 //    Position and turn on the light
     glLightfv(GL_LIGHT0,GL_POSITION,lightPos);
     glEnable(GL_LIGHT0);
+    glShadeModel(GL_SMOOTH); // Type of shading for the polygons
+    glEnable(GL_DEPTH_TEST); // We enable the depth test (also called z buffer)
+    glPolygonMode (GL_FRONT_AND_BACK, GL_FILL); // Polygon rasterization mode (polygon filled)
+    glEnable(GL_TEXTURE_2D); // This Enable the Texture mapping
+    cube.id_texture=LoadBitmap("./Mapping.bmp"); // The Function LoadBitmap() return the current texture ID
 
-//    Enable color tracking
-
-    glEnable(GL_COLOR_MATERIAL);
-
-//    Set Material properties to follow glColor values
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-
-//    All materials hereafter have full specular reflectivity
- //   with a moderate shine
-    glMaterialfv(GL_FRONT, GL_SPECULAR,specref);
-    glMateriali(GL_FRONT,GL_SHININESS,64);
+    // If the last function returns -1 it means the file was not found so we exit from the program
+    if (cube.id_texture==-1)
+    {
+        MessageBox(NULL,"Image file: mapping.bmp not found", "Zetadeck",MB_OK | MB_ICONERROR);
+        exit (0);
+    }
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 }
 int main(int argc, char **argv)
-{
+{   
+    File_Read();
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(600, 600);
