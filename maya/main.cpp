@@ -1,28 +1,37 @@
 #include "header.h"
 #define PI 3.14159265
 
+static float normalx=1/sqrt(3), normaly=1/sqrt(3), normalz=1/sqrt(3);
 float x=100.0f,z=100.0f,y=100.0f;
 void SpecialKeys(int key, int x0, int y0)
     {
     if(key == GLUT_KEY_UP){
         y = cos(PI/90) * y - sin(PI/90) * z;
         z = cos(PI/90) * z + sin(PI/90) * y;
+        normaly=y/sqrt(x*x+y*y+z*z);
+        normalz=z/sqrt(x*x+y*y+z*z);    
         glutPostRedisplay();
     }
     else {if(key == GLUT_KEY_DOWN){
         y = cos(PI/90) * y + sin(PI/90) * z;
         z = cos(PI/90) * z - sin(PI/90) * y;
+        normalz=z/sqrt(x*x+y*y+z*z);
+        normaly=y/sqrt(x*x+y*y+z*z);
         glutPostRedisplay();
     }
         else{
             if(key==GLUT_KEY_RIGHT){
-            x = cos(PI/90) * x - sin(PI/90) * y;
-            y = cos(PI/90) * y + sin(PI/90) * x;
+            x = cos(PI/90) * x - sin(PI/90) * z;
+            z = cos(PI/90) * z + sin(PI/90) * x;
+            normalx=x/sqrt(x*x+y*y+z*z);
+            normalz=z/sqrt(x*x+y*y+z*z);
             glutPostRedisplay();
             }
             else{ if(key == GLUT_KEY_LEFT){
-            x = cos(PI/90) * x + sin(PI/90) * y;
-            y = cos(PI/90) * y - sin(PI/90) * x;
+            x = cos(PI/90) * x + sin(PI/90) * z;
+            z = cos(PI/90) * z - sin(PI/90) * x;
+            normalx=x/sqrt(x*x+y*y+z*z);
+            normalz=z/sqrt(x*x+y*y+z*z);
             glutPostRedisplay();
             }
             else{
@@ -58,9 +67,9 @@ void displayMe(void)
 {   float normal[3];
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
-    gluLookAt(	y, x, z,
+    gluLookAt(	x, y, z,
 			0, 0, 0,
-			0.0f, 1.0f,  0.0f);
+			normalx, normaly, normalz);
     glColor3f(0.0f, 0.7f, 0.7f);
 	glBegin(GL_QUADS);
 	for (int i = 0; i < countf; i++)
@@ -117,14 +126,14 @@ void setup()
     glEnable(GL_DEPTH_TEST); // We enable the depth test (also called z buffer)
     glPolygonMode (GL_FRONT_AND_BACK, GL_FILL); // Polygon rasterization mode (polygon filled)
     glEnable(GL_TEXTURE_2D); // This Enable the Texture mapping
-    cube.id_texture=LoadBitmap("./Mapping.bmp"); // The Function LoadBitmap() return the current texture ID
+  //  cube.id_texture=LoadBitmap("./Mapping.bmp"); // The Function LoadBitmap() return the current texture ID
 
     // If the last function returns -1 it means the file was not found so we exit from the program
-    if (cube.id_texture==-1)
-    {
-        MessageBox(NULL,"Image file: mapping.bmp not found", "Zetadeck",MB_OK | MB_ICONERROR);
-        exit (0);
-    }
+    // if (cube.id_texture==-1)
+    // {
+    //     MessageBox(NULL,"Image file: mapping.bmp not found", "Zetadeck",MB_OK | MB_ICONERROR);
+    //     exit (0);
+    // }
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 }
 int main(int argc, char **argv)
