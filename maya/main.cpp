@@ -124,8 +124,8 @@ void setup()
     glEnable(GL_LIGHT0);
     glShadeModel(GL_SMOOTH); // Type of shading for the polygons
     glEnable(GL_DEPTH_TEST); // We enable the depth test (also called z buffer)
-    glPolygonMode (GL_FRONT_AND_BACK, GL_FILL); // Polygon rasterization mode (polygon filled)
-    glEnable(GL_TEXTURE_2D); // This Enable the Texture mapping
+   // glPolygonMode (GL_FRONT_AND_BACK, GL_FILL); // Polygon rasterization mode (polygon filled)
+    //glEnable(GL_TEXTURE_2D); // This Enable the Texture mapping
   //  cube.id_texture=LoadBitmap("./Mapping.bmp"); // The Function LoadBitmap() return the current texture ID
 
     // If the last function returns -1 it means the file was not found so we exit from the program
