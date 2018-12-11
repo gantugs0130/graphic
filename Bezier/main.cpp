@@ -1,105 +1,27 @@
-#include <GL/glu.h>
 #include <GL/glut.h>
-#include <iostream>
-#include <vector>
 #include <math.h>
-#include <string.h>
-#include<fstream>
+#include <iostream>
 #define PI 3.14159265
-
 using namespace std;
-
-vector< vector<float> > vertex3f;
-vector< vector<int> > vertexFace;
-float angle =0;
-
-// XZ position of the camera
-float posx=100.0f,posz=100.0f,posy=100.0f;
+double alpha =PI/90;
 static float normalx=0, normaly=1, normalz=0;
-void ReduceToUnit(float vector[3])
-{
-	float length;
+static float posx=0.0f,posz=100.0f,posy=0.0f;
+// Point class to keep it a little cleaner.
+class Point {
+    public:
+    float x, y, z;
+public:
+    void setxy(float x2, float y2, float z2) { x = x2; y = y2; z=z2;}
+    const Point & operator=(const Point &rPoint) {
+         x = rPoint.x;
+         y = rPoint.y;   
+         z = rPoint.z;       
+         return *this;
+      }
 
-	// Calculate the length of the vector
-	length = float(sqrt((vector[0] * vector[0]) +
-						 (vector[1] * vector[1]) +
-						 (vector[2] * vector[2])));
+};
 
-	// Keep the program from blowing up by providing an exceptable
-	// value for vectors that may calculated too close to zero.
-	if (length == 0.0f)
-		length = 1.0f;
-
-	// Dividing each element by the length will result in a
-	// unit normal vector.
-	vector[0] /= length;
-	vector[1] /= length;
-	vector[2] /= length;
-}
-
-void calcNormal(float v[3][3], float out[3])
-{
-	float v1[3], v2[3];
-	static const int x = 0;
-	static const int y = 1;
-	static const int z = 2;
-
-	// Calculate two vectors from the three points
-	v1[x] = v[0][x] - v[1][x];
-	v1[y] = v[0][y] - v[1][y];
-	v1[z] = v[0][z] - v[1][z];
-
-	v2[x] = v[1][x] - v[2][x];
-	v2[y] = v[1][y] - v[2][y];
-	v2[z] = v[1][z] - v[2][z];
-
-	// Take the cross product of the two vectors to get
-	// the normal vector which will be stored in out
-	out[x] = v1[y] * v2[z] - v1[z] * v2[y];
-	out[y] = v1[z] * v2[x] - v1[x] * v2[z];
-	out[z] = v1[x] * v2[y] - v1[y] * v2[x];
-
-	// Normalize the vector (shorten length to one)
-	ReduceToUnit(out);
-}
-
-bool is_read = true;
-
-void File_Read(){
-    ifstream  infile;
-    infile.open("./bunny.obj");
-    int i=0;
-    char a;
-        infile >>a;
-    while(a=='v'){
-        vector<float> temp;
-        float x;
-        float y;
-        float z;
-        infile >>x;
-        infile >>y;
-        infile >>z;
-        temp.push_back(x);
-        temp.push_back(y);
-        temp.push_back(z);
-        vertex3f.push_back(temp);
-        infile >>a;
-    }
-    while(!infile.eof()){
-        int x1, x2, x3;
-        vector<int> temp1;
-        infile >>x1;
-        infile >>x2;
-        infile >>x3;
-        temp1.push_back(x1);
-        temp1.push_back(x2);
-        temp1.push_back(x3);
-        vertexFace.push_back(temp1);
-        infile >>a;
-
-    }
-    infile.close();
-}
+Point abc[4];
 
 void SpecialKeys(int key, int x0, int y0)
     {
@@ -161,41 +83,6 @@ void SpecialKeys(int key, int x0, int y0)
     }
 
     }
-void displayMe(void)
-{   float normal[3];
-    float corners[2][3];
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glPushMatrix();
-    gluLookAt(	posx, posy, posz,
-			0, 0, 0,
-			normalx, normaly,  normalz);
-    glColor3f(0.0f, 0.7f, 0.7f);
-	glBegin(GL_TRIANGLES);
-	for (int i = 0; i < vertexFace.size(); i++)
-	{
-
-        float v[3][3];
-        corners[0][0]=vertex3f[vertexFace[i][0] - 1][0];
-        corners[0][1]=vertex3f[vertexFace[i][0] - 1][1];
-        corners[0][2]=vertex3f[vertexFace[i][0] - 1][2];
-        corners[1][0]=vertex3f[vertexFace[i][1] - 1][0];
-        corners[1][1]=vertex3f[vertexFace[i][1] - 1][1];
-        corners[1][2]=vertex3f[vertexFace[i][1] - 1][2];
-        corners[2][0]=vertex3f[vertexFace[i][2] - 1][0];
-        corners[2][1]=vertex3f[vertexFace[i][2] - 1][1];
-        corners[2][2]=vertex3f[vertexFace[i][2] - 1][2];
-        calcNormal(corners, normal);
-        glNormal3fv(normal);
-        glVertex3f(vertex3f[vertexFace[i][0] - 1][0], vertex3f[vertexFace[i][0] - 1][1], vertex3f[vertexFace[i][0] - 1][2]);
-		glVertex3f(vertex3f[vertexFace[i][1] - 1][0], vertex3f[vertexFace[i][1] - 1][1], vertex3f[vertexFace[i][1] - 1][2]);
-		glVertex3f(vertex3f[vertexFace[i][2] - 1][0], vertex3f[vertexFace[i][2] - 1][1], vertex3f[vertexFace[i][2] - 1][2]);
-	}
-	glEnd();
-
-	glPopMatrix();
-	glutSwapBuffers();
-}
-
 void resize(int w, int h)
 {
 	glViewport(0, 0, w, h);
@@ -208,11 +95,54 @@ void resize(int w, int h)
 	glLoadIdentity();
 
 }
+void ReduceToUnit(float vector[3])
+{
+	float length;
 
+	// Calculate the length of the vector
+	length = float(sqrt((vector[0] * vector[0]) +
+						 (vector[1] * vector[1]) +
+						 (vector[2] * vector[2])));
+
+	// Keep the program from blowing up by providing an exceptable
+	// value for vectors that may calculated too close to zero.
+	if (length == 0.0f)
+		length = 1.0f;
+
+	// Dividing each element by the length will result in a
+	// unit normal vector.
+	vector[0] /= length;
+	vector[1] /= length;
+	vector[2] /= length;
+}
+
+void calcNormal(float v[3][3], float out[3])
+{
+	float v1[3], v2[3];
+	static const int x = 0;
+	static const int y = 1;
+	static const int z = 2;
+
+	// Calculate two vectors from the three points
+	v1[x] = v[0][x] - v[1][x];
+	v1[y] = v[0][y] - v[1][y];
+	v1[z] = v[0][z] - v[1][z];
+
+	v2[x] = v[1][x] - v[2][x];
+	v2[y] = v[1][y] - v[2][y];
+	v2[z] = v[1][z] - v[2][z];
+
+	// Take the cross product of the two vectors to get
+	// the normal vector which will be stored in out
+	out[x] = v1[y] * v2[z] - v1[z] * v2[y];
+	out[y] = v1[z] * v2[x] - v1[x] * v2[z];
+	out[z] = v1[x] * v2[y] - v1[y] * v2[x];
+
+	// Normalize the vector (shorten length to one)
+	ReduceToUnit(out);
+}
 void setup()
 {
-
-	File_Read();
 	GLfloat  ambientLight[] = {0.4f, 0.4f, 0.4f, 1.0f };
     GLfloat  diffuseLight[] = {0.7f, 0.7f, 0.7f, 1.0f };
     GLfloat  specular[] = { 0.9f, 0.9f, 0.9f, 1.0f};
@@ -248,18 +178,77 @@ void setup()
     glMateriali(GL_FRONT,GL_SHININESS,64);
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 }
+void drawL(Point p1, Point p2) {
+    Point pp1=p1, pp2=p2;
+    float normal[3];
+    float corners[3][3];
+    glColor3f(1.0f, 0.8f, 0.2f);
+    float radius1=sqrt(pp1.x*pp1.x+pp1.z+pp1.z);
+    float radius2=sqrt(pp2.x*pp2.x+pp2.z+pp2.z);
+    glBegin(GL_QUADS);
+    for(int i=0; i<181; i++){
+    corners[0][0]=pp1.x;
+    corners[0][1]=pp1.y;
+    corners[0][2]=pp1.z;
+    corners[1][0]=pp2.x;
+    corners[1][1]=pp2.y;
+    corners[1][2]=pp2.z;
+    corners[2][0]=sin(i*alpha) * radius2;
+    corners[2][1]=pp2.y;
+    corners[2][2]=cos(i*alpha) * radius2;
+    calcNormal(corners, normal);
+    glNormal3fv(normal);
+    glVertex3f(pp1.x, pp1.y, pp1.z);
+    glVertex3f(pp2.x, pp2.y, pp2.z);
+    glVertex3f(cos(i*alpha) * radius2,pp2.y,sin(i*alpha) * radius2);
+    glVertex3f(cos(i*alpha) * radius1,pp1.y,sin(i*alpha) * radius1);
+    pp1.z = sin(i*alpha) * radius1;
+    pp1.x = cos(i*alpha) * radius1;
+    pp2.z = sin(i*alpha) * radius2;
+    pp2.x = cos(i*alpha) * radius2;
+    }
+    glEnd();
+}
 
-int main(int argc, char **argv)
-{
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(600, 600);
-	glutInitWindowPosition(200, 50);
-	glutCreateWindow("Bunny");
-	glutReshapeFunc(resize);
-	glutDisplayFunc(displayMe);
-	glutSpecialFunc(SpecialKeys);
-	setup();
-	glutMainLoop();
-	return 0;
+// Calculate the next bezier point.
+Point drawBezier(Point A, Point B, Point C, Point D, double t) {
+    Point P;
+    P.x = pow((1 - t), 3) * A.x + 3 * t * pow((1 -t), 2) * B.x + 3 * (1-t) * pow(t, 2)* C.x + pow (t, 3)* D.x;
+    P.y = pow((1 - t), 3) * A.y + 3 * t * pow((1 -t), 2) * B.y + 3 * (1-t) * pow(t, 2)* C.y + pow (t, 3)* D.y;      
+    P.z = 0;
+    return P;
+}
+
+void myDisplay() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glPushMatrix();
+    gluLookAt(	posx, posy, posz,
+			0, 0, 0,
+			normalx, normaly, normalz); 
+    abc[0].x=0,abc[0].y=0, abc[0].z =0;
+    abc[1].x=20,abc[1].y=10, abc[1].z =0;
+    abc[2].x=5,abc[2].y=17, abc[2].z =0;
+    abc[3].x=10,abc[3].y=20, abc[3].z =0;
+    glColor3f(1,1,1);
+    for(double t = 0.0;t <= 1.0; t += 0.01) {
+        Point P = drawBezier(abc[0], abc[1], abc[2], abc[3],  t);
+        Point P1 = drawBezier(abc[0], abc[1], abc[2], abc[3],  t+0.01);
+            drawL(P, P1);
+        }
+    glPopMatrix();
+    glutSwapBuffers();
+}
+
+int main(int argc, char *argv[]) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(640,480);
+    glutInitWindowPosition(100,150);
+    glutCreateWindow("Bezier Curve");   
+    glutReshapeFunc(resize);
+    glutDisplayFunc(myDisplay);
+    glutSpecialFunc(SpecialKeys);
+    setup();
+    glutMainLoop();
+    return 0;
 }
