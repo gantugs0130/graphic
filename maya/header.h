@@ -5,6 +5,7 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 #include<stdio.h>
+#include "texture.cpp"
 class vertexs{
 public:
     float x, y ,z;
