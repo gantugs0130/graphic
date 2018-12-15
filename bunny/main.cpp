@@ -1,21 +1,15 @@
-#include <GL/glu.h>
-#include <GL/glut.h>
-#include <iostream>
 #include <vector>
-#include <math.h>
-#include <string.h>
-#include<fstream>
+#include "header.h"
 #define PI 3.14159265
 
 using namespace std;
 
 vector< vector<float> > vertex3f;
 vector< vector<int> > vertexFace;
-float angle =0;
 
 // XZ position of the camera
-float posx=100.0f,posz=100.0f,posy=100.0f;
-static float normalx=0, normaly=1, normalz=0;
+float posx=0.0f,posz=0.0f,posy=200.0f;
+static float normalx=0, normaly=0, normalz=1;
 void ReduceToUnit(float vector[3])
 {
 	float length;
@@ -62,9 +56,6 @@ void calcNormal(float v[3][3], float out[3])
 	// Normalize the vector (shorten length to one)
 	ReduceToUnit(out);
 }
-
-bool is_read = true;
-
 void File_Read(){
     ifstream  infile;
     infile.open("./bunny.obj");
@@ -100,7 +91,24 @@ void File_Read(){
     }
     infile.close();
 }
-
+void normalKeys(unsigned char key, int x00, int y00){
+    switch(key){
+        case 'p':
+        posx = cos(PI/90) * posx - sin(PI/90) * posz;
+        posz = cos(PI/90) * posz + sin(PI/90) * posx;
+        normalx=cos(PI/90) * normalx - sin(PI/90) * normalz;
+        normalz=cos(PI/90) * normalz + sin(PI/90) * normalx;  
+        glutPostRedisplay();
+        break;
+        case 'o':
+        posx = cos(PI/90) * posx + sin(PI/90) * posz;
+        posz = cos(PI/90) * posz - sin(PI/90) * posx;
+        normalx=cos(PI/90) * normalx + sin(PI/90) * normalz;
+        normalz=cos(PI/90) * normalz - sin(PI/90) * normalx;  
+        glutPostRedisplay();
+        break;
+    }
+}
 void SpecialKeys(int key, int x0, int y0)
     {
     if(key == GLUT_KEY_UP){
@@ -162,36 +170,198 @@ void SpecialKeys(int key, int x0, int y0)
 
     }
 void displayMe(void)
-{   float normal[3];
+{   
+    GLUquadricObj *pObj;  
+    float normal[3];
     float corners[2][3];
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
     gluLookAt(	posx, posy, posz,
 			0, 0, 0,
 			normalx, normaly,  normalz);
-    glColor3f(0.0f, 0.7f, 0.7f);
+    glColor3f(0.0f, 0.5f, 0.4f);
+    pObj = gluNewQuadric();
+    gluQuadricNormals(pObj, GLU_SMOOTH);
+
+    glBegin(GL_QUADS);
+    corners[0][0]=-100;
+    corners[0][1]=0;
+    corners[0][2]=-100;
+    corners[1][0]=-100;
+    corners[1][1]=0;
+    corners[1][2]=100;
+    corners[2][0]=100;
+    corners[2][1]=0;
+    corners[2][2]=100;
+    calcNormal(corners, normal);
+    glNormal3fv(normal);
+    glVertex3f(-100,0,-100);
+    glVertex3f(-100,0,100);
+    glVertex3f(100,0,100);
+    glVertex3f(100,0,-100);
+    glEnd();
+    glBegin(GL_QUADS);
+    corners[0][0]=-100;
+    corners[0][1]=-5;
+    corners[0][2]=-100;
+    corners[1][0]=-100;
+    corners[1][1]=-5;
+    corners[1][2]=100;
+    corners[2][0]=100;
+    corners[2][1]=-5;
+    corners[2][2]=100;
+    calcNormal(corners, normal);
+    glNormal3fv(normal);
+    glVertex3f(-100,-5,-100);
+    glVertex3f(-100,-5,100);
+    glVertex3f(100,-5,100);
+    glVertex3f(100,-5,-100);
+    glEnd();
+    glBegin(GL_QUADS);
+    corners[0][0]=-100;
+    corners[0][1]=0;
+    corners[0][2]=-100;
+    corners[1][0]=-100;
+    corners[1][1]=0;
+    corners[1][2]=100;
+    corners[2][0]=-100;
+    corners[2][1]=-5;
+    corners[2][2]=100;
+    calcNormal(corners, normal);
+    glNormal3fv(normal);
+    glVertex3f(-100,0,-100);
+    glVertex3f(-100,0,100);
+    glVertex3f(-100,-5,100);
+    glVertex3f(-100,-5,-100);
+    glEnd();
+    glBegin(GL_QUADS);
+    corners[0][0]=-100;
+    corners[0][1]=0;
+    corners[0][2]=100;
+    corners[1][0]=100;
+    corners[1][1]=0;
+    corners[1][2]=100;
+    corners[2][0]=100;
+    corners[2][1]=-5;
+    corners[2][2]=100;
+    calcNormal(corners, normal);
+    glNormal3fv(normal);
+    glVertex3f(-100,0,100);
+    glVertex3f(100,0,100);
+    glVertex3f(100,-5,100);
+    glVertex3f(-100,-5,100);
+    glEnd();
+    glBegin(GL_QUADS);
+    corners[0][0]=100;
+    corners[0][1]=0;
+    corners[0][2]=100;
+    corners[1][0]=100;
+    corners[1][1]=0;
+    corners[1][2]=-100;
+    corners[2][0]=100;
+    corners[2][1]=-5;
+    corners[2][2]=-100;
+    calcNormal(corners, normal);
+    glNormal3fv(normal);
+    glVertex3f(100,0,100);
+    glVertex3f(100,0,-100);
+    glVertex3f(100,-5,-100);
+    glVertex3f(100,-5,100);
+    glEnd();
+    glBegin(GL_QUADS);
+    corners[0][0]=100;
+    corners[0][1]=0;
+    corners[0][2]=-100;
+    corners[1][0]=-100;
+    corners[1][1]=0;
+    corners[1][2]=-100;
+    corners[2][0]=-100;
+    corners[2][1]=-5;
+    corners[2][2]=-100;
+    calcNormal(corners, normal);
+    glNormal3fv(normal);
+    glVertex3f(100,0,-100);
+    glVertex3f(-100,0,-100);
+    glVertex3f(-100,-5,-100);
+    glVertex3f(100,-5,-100);
+    glEnd();
+    
+    
+    glColor3f(0.4f, 0.4f, 0.5f);
 	glBegin(GL_TRIANGLES);
 	for (int i = 0; i < vertexFace.size(); i++)
 	{
 
         float v[3][3];
         corners[0][0]=vertex3f[vertexFace[i][0] - 1][0];
-        corners[0][1]=vertex3f[vertexFace[i][0] - 1][1];
-        corners[0][2]=vertex3f[vertexFace[i][0] - 1][2];
+        corners[0][1]=vertex3f[vertexFace[i][0] - 1][2]+13;
+        corners[0][2]=-vertex3f[vertexFace[i][0] - 1][1];
         corners[1][0]=vertex3f[vertexFace[i][1] - 1][0];
-        corners[1][1]=vertex3f[vertexFace[i][1] - 1][1];
-        corners[1][2]=vertex3f[vertexFace[i][1] - 1][2];
+        corners[1][1]=vertex3f[vertexFace[i][1] - 1][2]+13;
+        corners[1][2]=-vertex3f[vertexFace[i][1] - 1][1];
         corners[2][0]=vertex3f[vertexFace[i][2] - 1][0];
-        corners[2][1]=vertex3f[vertexFace[i][2] - 1][1];
-        corners[2][2]=vertex3f[vertexFace[i][2] - 1][2];
+        corners[2][1]=vertex3f[vertexFace[i][2] - 1][2]+13;
+        corners[2][2]=-vertex3f[vertexFace[i][2] - 1][1];
         calcNormal(corners, normal);
         glNormal3fv(normal);
-        glVertex3f(vertex3f[vertexFace[i][0] - 1][0], vertex3f[vertexFace[i][0] - 1][1], vertex3f[vertexFace[i][0] - 1][2]);
-		glVertex3f(vertex3f[vertexFace[i][1] - 1][0], vertex3f[vertexFace[i][1] - 1][1], vertex3f[vertexFace[i][1] - 1][2]);
-		glVertex3f(vertex3f[vertexFace[i][2] - 1][0], vertex3f[vertexFace[i][2] - 1][1], vertex3f[vertexFace[i][2] - 1][2]);
+        glVertex3f(vertex3f[vertexFace[i][0] - 1][0], vertex3f[vertexFace[i][0] - 1][2]+13, -vertex3f[vertexFace[i][0] - 1][1]);
+		glVertex3f(vertex3f[vertexFace[i][1] - 1][0], vertex3f[vertexFace[i][1] - 1][2]+13, -vertex3f[vertexFace[i][1] - 1][1]);
+        glVertex3f(vertex3f[vertexFace[i][2] - 1][0], vertex3f[vertexFace[i][2] - 1][2]+13, -vertex3f[vertexFace[i][2] - 1][1]);
 	}
 	glEnd();
-
+    //glBindTexture(GL_TEXTURE_2D, 0);
+	glBegin(GL_QUADS);
+	for (int i = 0; i < countf; i++)
+	{   
+        for(int j=0; j<4;j++){
+            normal[0]=f[i].vn[j].x;
+            normal[1]=f[i].vn[j].y;
+            normal[2]=f[i].vn[j].z;
+            glNormal3fv(normal);
+            // glTexCoord2f(f[i].vt[j].x,f[i].vt[j].y);
+            glVertex3f(2*f[i].v[j].x+50,2*f[i].v[j].y,2*f[i].v[j].z);
+        }
+	}
+	glEnd();
+    glBegin(GL_QUADS);
+	for (int i = 0; i < countf; i++)
+	{   
+        for(int j=0; j<4;j++){
+            normal[0]=f[i].vn[j].x;
+            normal[1]=f[i].vn[j].y;
+            normal[2]=f[i].vn[j].z;
+            glNormal3fv(normal);
+            // glTexCoord2f(f[i].vt[j].x,f[i].vt[j].y);
+            glVertex3f(f[i].v[j].x+30,f[i].v[j].y,f[i].v[j].z);
+        }
+	}
+	glEnd();
+    glBegin(GL_QUADS);
+	for (int i = 0; i < countf; i++)
+	{   
+        for(int j=0; j<4;j++){
+            normal[0]=f[i].vn[j].x;
+            normal[1]=f[i].vn[j].y;
+            normal[2]=f[i].vn[j].z;
+            glNormal3fv(normal);
+            // glTexCoord2f(f[i].vt[j].x,f[i].vt[j].y);
+            glVertex3f(f[i].v[j].x-30,f[i].v[j].y,f[i].v[j].z);
+        }
+	}
+	glEnd();
+    glBegin(GL_QUADS);
+	for (int i = 0; i < countf; i++)
+	{   
+        for(int j=0; j<4;j++){
+            normal[0]=f[i].vn[j].x;
+            normal[1]=f[i].vn[j].y;
+            normal[2]=f[i].vn[j].z;
+            glNormal3fv(normal);
+            // glTexCoord2f(f[i].vt[j].x,f[i].vt[j].y);
+            glVertex3f(2*f[i].v[j].x-50,2*f[i].v[j].y,2*f[i].v[j].z);
+        }
+	}
+	glEnd();
 	glPopMatrix();
 	glutSwapBuffers();
 }
@@ -202,7 +372,7 @@ void resize(int w, int h)
 	GLfloat fAspect = (GLfloat)w / (GLfloat)h;
 
 	glMatrixMode(GL_PROJECTION);
-    gluPerspective(35.0f, fAspect, 1.0, 400.0);
+    gluPerspective(35.0f, fAspect, 1.0, 1000.0);
   //  glShadeModel(GL_SMOOTH);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -211,7 +381,7 @@ void resize(int w, int h)
 
 void setup()
 {
-
+    File_Read1();
 	File_Read();
 	GLfloat  ambientLight[] = {0.4f, 0.4f, 0.4f, 1.0f };
     GLfloat  diffuseLight[] = {0.7f, 0.7f, 0.7f, 1.0f };
@@ -241,7 +411,10 @@ void setup()
 
 //    Set Material properties to follow glColor values
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_TEXTURE_2D); // This Enable the Texture mapping
 
+
+   // int ss=LoadBitmap("./Mapping.bmp");
 //    All materials hereafter have full specular reflectivity
  //   with a moderate shine
     glMaterialfv(GL_FRONT, GL_SPECULAR,specref);
@@ -253,12 +426,13 @@ int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-	glutInitWindowSize(600, 600);
+	glutInitWindowSize(800, 800);
 	glutInitWindowPosition(200, 50);
 	glutCreateWindow("Bunny");
 	glutReshapeFunc(resize);
 	glutDisplayFunc(displayMe);
 	glutSpecialFunc(SpecialKeys);
+    glutKeyboardFunc(normalKeys);
 	setup();
 	glutMainLoop();
 	return 0;

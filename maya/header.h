@@ -44,6 +44,7 @@ void File_Read(){
         file >> a;
         i++;
     }
+    cout<<"sssssssssssss";
     countv=i;
     i=0;
 
@@ -86,4 +87,5 @@ void File_Read(){
         file >> a;
     }
     countf = i;
+    file.close();
     }
