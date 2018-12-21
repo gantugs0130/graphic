@@ -24,17 +24,17 @@ public:
     textures vt[4];
     normals vn[4];
 };
-normals vn[2000];
-textures vt[2000];
-vertexs v[2000];
-faces f[2000];
+normals vn[200000];
+textures vt[200000];
+vertexs v[20000];
+faces f[200000];
 int countv=0, countvn=0, countvt=0, countf=0;
 
 using namespace std;
 void File_Read(){
     ifstream  file;
     char a[2];
-    file.open("../MayaCharacter/Character.obj");
+    file.open("./Twin island.obj");
     file >> a;
     int i = 0;
     while(strcmp(a,"v") == 0){
@@ -44,7 +44,6 @@ void File_Read(){
         file >> a;
         i++;
     }
-    cout<<"sssssssssssss";
     countv=i;
     i=0;
 

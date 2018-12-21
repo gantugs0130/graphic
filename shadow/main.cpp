@@ -8,8 +8,8 @@
 #define PI 3.14159265
 
 using namespace std;
-float posx=0.0f,posz=0.0f,posy=100.0f;
-static float normalx=0, normaly=1, normalz=0;
+float posx=0.0f,posz=0.0f,posy=1000.0f;
+static float normalx=0, normaly=0, normalz=1;
 vector< vector<float> > vertex3f;
 vector< vector<int> > vertexFace;
 
@@ -24,7 +24,7 @@ vector< vector<int> > vertexFace;
 GLfloat  ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 GLfloat  diffuseLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };
 GLfloat  specular[] = { 1.0f, 1.0f, 1.0f, 1.0f};
-GLfloat     lightPos[] = { -75.0f, 150.0f, -50.0f, 0.0f };
+GLfloat  lightPos[] = { -75.0f, 150.0f, -50.0f, 0.0f };
 GLfloat  specref[] =  { 1.0f, 1.0f, 1.0f, 1.0f };
 
 // Transformation matrix to project shadow
@@ -208,8 +208,6 @@ void RenderScene(void)
     gluLookAt(posx, posy, posz,
 			0, 0, 0,
 			normalx, normaly,  normalz);
-    glPopMatrix();
-    glLoadIdentity();
     // Draw the ground, we do manual shading to a darker green
     // in the background to give the illusion of depth
     glBegin(GL_QUADS);
@@ -397,7 +395,7 @@ void ChangeSize(int w, int h)
 int main(int argc, char* argv[])
 
     {
-        File_Read();
+    File_Read();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(600, 600);

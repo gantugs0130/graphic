@@ -71,7 +71,7 @@ void displayMe(void)
 			0, 0, 0,
 			normalx, normaly, normalz);
     glColor3f(0.0f, 0.7f, 0.7f);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    //glBindTexture(GL_TEXTURE_2D, 0);
 	glBegin(GL_QUADS);
 	for (int i = 0; i < countf; i++)
 	{   
@@ -80,7 +80,7 @@ void displayMe(void)
             normal[1]=f[i].vn[j].y;
             normal[2]=f[i].vn[j].z;
             glNormal3fv(normal);
-            glTexCoord2f(f[i].vt[j].x,f[i].vt[j].y);
+           // glTexCoord2f(f[i].vt[j].x,f[i].vt[j].y);
             glVertex3f(f[i].v[j].x,f[i].v[j].y,f[i].v[j].z);
         }
 	}
@@ -103,6 +103,7 @@ void resize(int w, int h)
 }
 void setup()
 {
+    File_Read();
 	GLfloat  ambientLight[] = {0.4f, 0.4f, 0.4f, 1.0f };
     GLfloat  diffuseLight[] = {0.7f, 0.7f, 0.7f, 1.0f };
     GLfloat  specular[] = { 0.9f, 0.9f, 0.9f, 1.0f};
@@ -131,10 +132,10 @@ void setup()
 
 //    Set Material properties to follow glColor values
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-    glEnable(GL_TEXTURE_2D); // This Enable the Texture mapping
+   // glEnable(GL_TEXTURE_2D); // This Enable the Texture mapping
 
 
-    int ss=LoadBitmap("./Mapping.bmp");
+   // int ss=LoadBitmap("./Mapping.bmp");
 //    All materials hereafter have full specular reflectivity
  //   with a moderate shine
     glMaterialfv(GL_FRONT, GL_SPECULAR,specref);
@@ -148,7 +149,7 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(200, 50);
-	glutCreateWindow("Bunny");
+	glutCreateWindow("maya");
 	glutReshapeFunc(resize);
 	glutDisplayFunc(displayMe);
 	glutSpecialFunc(SpecialKeys);
